@@ -2,7 +2,7 @@
   <div class="navbar-content">
     <ul class="listContainerPadding">
       @if (sessions.length === 0) {
-        <li>No sessions found.</li>
+        <li class="sessionsListStyle">No sessions found.</li>
       } @else {
         @for (session of sortedSessions(); track session) {
           <li class="d-flex align-items-center sessionsListStyle">
