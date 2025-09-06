@@ -18,9 +18,9 @@
       <li class="sessionsListStyle">No sessions found.</li>
       } @else {
       @for (session of sortedSessions(); track session) {
-      <li class="sessionsListStyle mb-2">
+      <li class="sessionsListStyle mb-2" (click)="openSession(session)"
+        [class.active-session]="activeSessionId === session.sessionId">
         <div class="d-flex flex-column">
-          <!-- Session name / input field -->
           <div class="d-flex justify-content-between align-items-center">
             <div class="flex-grow-1">
               <input *ngIf="editingSessionId === session.sessionId" type="text" [value]="session.sessionName"
@@ -33,22 +33,24 @@
 
             <!-- Dropdown for actions -->
             <div ngbDropdown class="ms-2">
-              <button class="btn btn-link p-0" id="dropdownMenuButton" ngbDropdownToggle>
+              <button class="btn btn-link p-0" id="dropdownMenuButton" ngbDropdownToggle
+                (click)="$event.stopPropagation()">
                 <i class="bi bi-three-dots-vertical shortMenuIcons"></i>
               </button>
               <div ngbDropdownMenu aria-labelledby="dropdownMenuButton" class="dropdown-menu-end">
-                <button class="dropdown-item" (click)="editSession(session)">
+                <button class="dropdown-item" (click)="editSession(session); $event.stopPropagation()">
                   <i class="bi bi-pencil me-1"></i> Edit
                 </button>
-                <button class="dropdown-item" (click)="toggleFavorite(session)">
+                <button class="dropdown-item" (click)="toggleFavorite(session); $event.stopPropagation()">
                   <i class="bi" [ngClass]="session.favorite ? 'bi-star-fill text-warning' : 'bi-star'"></i>
                   {{ session.favorite ? 'Unfavorite' : 'Favorite' }}
                 </button>
-                <button class="dropdown-item text-danger" (click)="deleteSession(session)">
+                <button class="dropdown-item text-danger" (click)="deleteSession(session); $event.stopPropagation()">
                   <i class="bi bi-trash me-1"></i> Delete
                 </button>
               </div>
             </div>
+
           </div>
         </div>
       </li>

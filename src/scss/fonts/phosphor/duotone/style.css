@@ -10029,6 +10029,7 @@
     padding: 7px 10px;
     border-radius: 10px;
     margin:5px 0px;
+    cursor: pointer;
 }
 .listContainerPadding{
   padding: 10px;
@@ -10046,4 +10047,35 @@
 }
 .shortMenuIcons{
   color: #623fb0;
+}
+.welcome-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.welcome-card {
+  text-align: center;
+  padding: 40px;
+  max-width: 500px;
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background-color: #f5f5f5;
+}
+
+.welcome-card h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.welcome-card p {
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+}
+
+.welcome-card button {
+  font-size: 1rem;
+  padding: 10px 20px;
 }
