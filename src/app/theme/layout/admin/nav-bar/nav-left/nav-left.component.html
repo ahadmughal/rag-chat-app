@@ -1,43 +1,42 @@
-<div class="me-auto pc-mob-drp">
-  <ul class="list-unstyled">
-    <li class="pc-h-item header-mobile-collapse">
-      <a
-        href="javascript:"
-        class="pc-head-link head-link-secondary ms-0 mobile-menu"
-        id="mobile-collapse mobile-collapse1"
-        (click)="this.NavCollapsedMob.emit()"
-      >
-        <i class="ti ti-menu-2"></i>
-      </a>
-    </li>
-    <li class="dropdown pc-h-item d-inline-flex d-md-none" ngbDropdown>
-      <a
-        class="pc-head-link head-link-secondary dropdown-toggle arrow-none m-0"
-        data-bs-toggle="dropdown"
-        href="javascript:"
-        ngbDropdownToggle
-      >
-        <i class="ti ti-search"></i>
-      </a>
-      <div class="dropdown-menu pc-h-dropdown drp-search" ngbDropdownMenu>
-        <form class="px-3">
-          <div class="form-group mb-0 d-flex align-items-center">
-            <i class="ti ti-search"></i>
-            <input type="search" class="form-control border-0 shadow-none" placeholder="Search here. . ." />
-          </div>
-        </form>
-      </div>
-    </li>
-    <li class="pc-h-item d-none d-md-inline-flex">
-      <form class="header-search">
-        <div class="search-btn">
-          <i class="ti ti-search"></i>
-        </div>
-        <input type="search" class="form-control" placeholder="Search here. . ." />
-        <button class="btn btn-light-secondary btn-search">
-          <i class="ti ti-adjustments-horizontal"></i>
-        </button>
-      </form>
-    </li>
-  </ul>
+<form class="search-form d-flex align-items-center" (ngSubmit)="submitSearch()" style="margin-top:15px">
+  <input
+    type="text"
+    class="form-control me-2"
+    placeholder="Search by keyword..."
+    [(ngModel)]="searchQuery"
+    name="searchQuery"
+    (input)="onInputChange()"
+  />
+  <input
+    type="text"
+    class="form-control me-2"
+    placeholder="Search by session ID..."
+    [(ngModel)]="searchSessionId"
+    name="searchSessionId"
+    (input)="onInputChange()"
+  />
+  <button class="btn btn-primary" type="submit">Search</button>
+</form>
+
+<!-- Search Results -->
+<div *ngIf="searchSubmitted && (results.length > 0 || !loading)" class="search-results mt-3 position-relative p-3 border rounded search-results-bg">
+
+  <!-- Close Button -->
+  <button type="button" class="btn-close position-absolute top-0 end-0 m-2" (click)="clearSearch()"></button>
+
+  <!-- Loading -->
+  <div *ngIf="loading">Searching...</div>
+
+  <!-- Results -->
+  <div *ngFor="let msg of results" class="result-item p-2 mb-2 border rounded">
+    <div><strong>Sender:</strong> {{ msg.sender }}</div>
+    <div><strong>Message:</strong> {{ msg.content }}</div>
+    <div *ngIf="msg.context"><strong>Context:</strong> {{ msg.context }}</div>
+    <div class="text-muted"><small>{{ msg.createdAt | date:'short' }}</small></div>
+  </div>
+
+  <!-- No Results -->
+  <div *ngIf="!loading && results.length === 0">
+    <p>No results found.</p>
+  </div>
 </div>

@@ -10079,3 +10079,13 @@
   font-size: 1rem;
   padding: 10px 20px;
 }
+.result-item{
+    background-color: white !important;
+    margin-top: 30px;
+}
+.search-results{
+  margin-bottom:30px !important;
+}
+.search-results-bg{
+  background: #dfd8ef !important;
+}

@@ -9,6 +9,8 @@ export const API_ENDPOINTS = {
 
   SEND_MESSAGE: '/messages/send',
   GET_MESSAGES_BY_SESSION: (sessionId: string) => `/messages/getBy/${sessionId}`,
+
+  SEARCH_MESSAGES: '/messages/search',
 };
 
 export const API_HEADERS = {
