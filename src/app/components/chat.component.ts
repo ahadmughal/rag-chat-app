@@ -1,81 +1,89 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { NgScrollbarModule } from 'ngx-scrollbar';
-import { BASE_URL, API_HEADERS } from 'src/app/constants/api-endpoints';
-
-interface ChatMessage {
-  sessionId: string;
-  userMessage: string;
-  responseMessage: string;
-}
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { MessageService } from 'src/app/services/message.service';
+import { ActiveSessionService } from 'src/app/services/active-session.service';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgScrollbarModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent implements OnInit, AfterViewChecked {
-
-  @Input() sessionId!: string; // session ID from sidebar selection
-  messages: ChatMessage[] = [];
+export class ChatComponent implements OnInit {
+  sessionId: string | null = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  messages: any[] = [];
   newMessage = '';
-  loading = false;
 
-  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
+  @ViewChild('messageContainer') messageContainer!: ElementRef;
 
-  // eslint-disable-next-line @angular-eslint/prefer-inject
-  constructor(private http: HttpClient) {}
+  constructor(
+    // eslint-disable-next-line @angular-eslint/prefer-inject
+    private route: ActivatedRoute,
+    // eslint-disable-next-line @angular-eslint/prefer-inject
+    private messageService: MessageService,
+    // eslint-disable-next-line @angular-eslint/prefer-inject
+    private activeSessionService: ActiveSessionService
+  ) {}
 
   ngOnInit(): void {
-    if (this.sessionId) this.loadMessages();
-  }
+    this.route.paramMap.subscribe(params => {
+      this.sessionId = params.get('sessionId');
+      if (this.sessionId) this.loadMessages(this.sessionId);
+    });
 
-  ngAfterViewChecked(): void {
-    this.scrollToBottom();
-  }
-
-  loadMessages(): void {
-    this.loading = true;
-    this.http.get<ChatMessage[]>(`${BASE_URL}/messages/${this.sessionId}`, { headers: new HttpHeaders(API_HEADERS) })
-      .subscribe({
-        next: (res) => {
-          this.messages = res;
-          this.loading = false;
-        },
-        error: (err) => {
-          console.error('Failed to fetch messages', err);
-          this.loading = false;
-        }
-      });
-  }
-
-  sendMessage(): void {
-    const trimmed = this.newMessage.trim();
-    if (!trimmed || !this.sessionId) return;
-
-    const payload = { userMessage: trimmed };
-
-    this.http.post<ChatMessage>(`${BASE_URL}/messages/${this.sessionId}`, payload, { headers: new HttpHeaders(API_HEADERS) })
-      .subscribe({
-        next: (res) => {
-          this.messages.push(res);
-          this.newMessage = '';
-          this.scrollToBottom();
-        },
-        error: (err) => console.error('Failed to send message', err)
-      });
-  }
-
-  scrollToBottom(): void {
-    try {
-      if (this.scrollContainer) {
-        this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
+    this.activeSessionService.activeSessionId$.subscribe(sessionId => {
+      if (sessionId) {
+        this.sessionId = sessionId;
+        this.loadMessages(sessionId);
+      } else {
+        this.messages = [];
+        this.sessionId = null;
       }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-empty
-    } catch (err) {}
+    });
+  }
+
+  loadMessages(sessionId: string) {
+    this.messageService.getMessagesBySession(sessionId).subscribe({
+      next: msgs => {
+        this.messages = msgs || [];
+        this.scrollToBottom();
+      },
+      error: err => console.error('Failed to fetch messages:', err)
+    });
+  }
+
+  sendMessage() {
+    if (!this.newMessage.trim() || !this.sessionId) return;
+    console.log('Send triggered:', this.newMessage);
+
+    const msg = this.newMessage.trim();
+    const tempMessage = { userMessage: msg, responseMessage: '...' };
+    this.messages.push(tempMessage);
+    this.scrollToBottom();
+    this.newMessage = '';
+
+    this.messageService.sendMessage(this.sessionId, msg).subscribe({
+      next: res => {
+        const lastMsg = this.messages[this.messages.length - 1];
+        if (lastMsg) lastMsg.responseMessage = res?.responseMessage || '(no response)';
+        this.scrollToBottom();
+      },
+      error: err => {
+        console.error('Failed to send message:', err);
+        alert('Failed to send message.');
+      }
+    });
+  }
+
+  private scrollToBottom() {
+    setTimeout(() => {
+      if (this.messageContainer) {
+        this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight;
+      }
+    }, 100);
   }
 }

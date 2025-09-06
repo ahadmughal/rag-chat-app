@@ -1,25 +1,17 @@
 <div class="chat-wrapper">
-  <ng-scrollbar #scrollContainer class="chat-messages" visibility="hover">
-    <div *ngIf="messages.length === 0 && !loading" class="text-center mt-5 text-muted">
-      No messages yet. Start the conversation!
-    </div>
-
+  <div class="chat-messages" #messageContainer>
     <div *ngFor="let msg of messages" class="chat-message-container">
-      <!-- User message -->
-      <div class="chat-message user-message">
+      <div class="chat-message user-message" *ngIf="msg.userMessage">
         {{ msg.userMessage }}
       </div>
-
-      <!-- Bot message -->
-      <div class="chat-message bot-message">
+      <div class="chat-message bot-message" *ngIf="msg.responseMessage">
         {{ msg.responseMessage }}
       </div>
     </div>
-  </ng-scrollbar>
+  </div>
 
   <div class="chat-input-container">
-    <input type="text" [(ngModel)]="newMessage" placeholder="Send your message..." class="form-control"
-      (keydown.enter)="sendMessage()" />
+    <input type="text" class="form-control" [(ngModel)]="newMessage" (keydown.enter)="sendMessage()" placeholder="Type your message..." />
     <button class="btn btn-primary ms-2" (click)="sendMessage()">Send</button>
   </div>
 </div>

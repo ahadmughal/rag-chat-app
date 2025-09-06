@@ -6,6 +6,9 @@ export const API_ENDPOINTS = {
   TOGGLE_FAVORITE: (sessionId: string) => `/sessions/toggle/favorite/${sessionId}`,
   DELETE_SESSION: (sessionId: string) => `/sessions/${sessionId}`,
   CREATE_SESSION: '/sessions/create',
+
+  SEND_MESSAGE: '/messages/send',
+  GET_MESSAGES_BY_SESSION: (sessionId: string) => `/messages/getBy/${sessionId}`,
 };
 
 export const API_HEADERS = {
