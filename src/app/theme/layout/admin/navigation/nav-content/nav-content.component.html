@@ -1,11 +1,11 @@
 <ng-scrollbar style="height: calc(100vh - 70px)" visibility="hover">
   <div class="navbar-content">
-    <ul>
+    <ul class="listContainerPadding">
       @if (sessions.length === 0) {
         <li>No sessions found.</li>
       } @else {
         @for (session of sortedSessions(); track session) {
-          <li class="d-flex align-items-center">
+          <li class="d-flex align-items-center sessionsListStyle">
             <input
               *ngIf="editingSessionId === session.sessionId"
               type="text"
@@ -14,7 +14,7 @@
               (keydown.enter)="saveSessionName(session)"
               (input)="session.sessionName = ($event.target['value'])"
               class="form-control me-2"
-              style="width: 200px;"
+              style="width: 100%"
               autofocus
             />
             <span *ngIf="editingSessionId !== session.sessionId">

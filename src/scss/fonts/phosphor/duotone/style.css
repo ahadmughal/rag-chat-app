@@ -10024,3 +10024,13 @@
 .pct-c-btn{
   display: none !important;
 }
+.sessionsListStyle{
+    background-color: #dfd8ef;
+    padding: 7px 10px;
+    border-radius: 10px;
+    margin:5px 0px;
+}
+.listContainerPadding{
+  padding: 10px;
+  padding-left: 10px !important;
+}
