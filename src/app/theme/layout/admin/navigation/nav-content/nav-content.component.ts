@@ -1,81 +1,78 @@
-// Angular import
-import { Component, OnInit, output, inject } from '@angular/core';
-import { Location } from '@angular/common';
-import { RouterModule } from '@angular/router';
-
-//theme version
-import { environment } from 'src/environments/environment';
-
-// project import
-import { NavigationItem, NavigationItems } from '../navigation';
-
-import { NavCollapseComponent } from './nav-collapse/nav-collapse.component';
-import { NavGroupComponent } from './nav-group/nav-group.component';
-import { NavItemComponent } from './nav-item/nav-item.component';
-
-// NgScrollbarModule
-import { SharedModule } from 'src/app/theme/shared/shared.module';
-
+import { Component, OnInit } from '@angular/core';
+import { SessionService } from 'src/app/services/session.service';
+import { NgScrollbarModule } from 'ngx-scrollbar';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-nav-content',
-  imports: [RouterModule, NavCollapseComponent, NavGroupComponent, NavItemComponent, SharedModule],
+  imports: [
+    CommonModule,
+    NgScrollbarModule,
+    // ...other imports
+  ],
   templateUrl: './nav-content.component.html',
   styleUrl: './nav-content.component.scss'
 })
 export class NavContentComponent implements OnInit {
-  private location = inject(Location);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  sessions: any[] = [];
+  editingSessionId: string | null = null;
 
-  // public props
-  NavCollapsedMob = output();
-  SubmenuCollapse = output();
+  // eslint-disable-next-line @angular-eslint/prefer-inject
+  constructor(private sessionService: SessionService) {}
 
-  // version
-  title = 'Demo application for version numbering';
-  currentApplicationVersion = environment.appVersion;
-
-  navigations!: NavigationItem[];
-  windowWidth: number;
-
-  // Constructor
-  constructor() {
-    this.navigations = NavigationItems;
-    this.windowWidth = window.innerWidth;
-  }
-
-  // Life cycle events
   ngOnInit() {
-    if (this.windowWidth < 1025) {
-      setTimeout(() => {
-        (document.querySelector('.coded-navbar') as HTMLDivElement).classList.add('menupos-static');
-      }, 500);
-    }
+    this.refreshSessions();
   }
 
-  fireOutClick() {
-    let current_url = this.location.path();
-    // eslint-disable-next-line
-    // @ts-ignore
-    if (this.location['_baseHref']) {
-      // eslint-disable-next-line
-      // @ts-ignore
-      current_url = this.location['_baseHref'] + this.location.path();
-    }
-    const link = "a.nav-link[ href='" + current_url + "' ]";
-    const ele = document.querySelector(link);
-    if (ele !== null && ele !== undefined) {
-      const parent = ele.parentElement;
-      const up_parent = parent?.parentElement?.parentElement;
-      const last_parent = up_parent?.parentElement;
-      if (parent?.classList.contains('coded-hasmenu')) {
-        parent.classList.add('coded-trigger');
-        parent.classList.add('active');
-      } else if (up_parent?.classList.contains('coded-hasmenu')) {
-        up_parent.classList.add('coded-trigger');
-        up_parent.classList.add('active');
-      } else if (last_parent?.classList.contains('coded-hasmenu')) {
-        last_parent.classList.add('coded-trigger');
-        last_parent.classList.add('active');
+  refreshSessions() {
+    this.sessionService.getSessions().subscribe({
+      next: (data) => {
+        this.sessions = data;
+      },
+      error: (err) => {
+        console.error('Failed to fetch sessions:', err);
       }
-    }
+    });
+  }
+
+  sortedSessions() {
+    // Favorites on top, then others, keep original order for non-favorites
+    return [...this.sessions].sort((a, b) => {
+      if (a.favorite === b.favorite) return 0;
+      return a.favorite ? -1 : 1;
+    });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  editSession(session: any) {
+    this.editingSessionId = session.sessionId;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  saveSessionName(session: any) {
+    const newName = session.sessionName;
+    this.editingSessionId = null;
+    if (!newName || !session.sessionId) return;
+    this.sessionService.updateSessionName(session.sessionId, newName).subscribe({
+      next: () => {
+        this.refreshSessions();
+      },
+      error: (err) => {
+        console.error('Failed to update session name', err);
+      }
+    });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  toggleFavorite(session: any) {
+    if (!session.sessionId) return;
+    this.sessionService.toggleFavorite(session.sessionId).subscribe({
+      next: () => {
+        this.refreshSessions();
+      },
+      error: (err) => {
+        console.error('Failed to toggle favorite', err);
+      }
+    });
   }
 }

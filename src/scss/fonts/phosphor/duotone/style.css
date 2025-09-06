@@ -10018,3 +10018,9 @@
   content: '\f2bd';
   margin-left: -1em;
 }
+.logostyling{
+  width:100px !important
+}
+.pct-c-btn{
+  display: none !important;
+}

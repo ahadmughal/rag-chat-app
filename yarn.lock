@@ -144,7 +144,7 @@
     "@angular-eslint/utils" "20.1.1"
     ts-api-utils "^2.1.0"
 
-"@angular-eslint/schematics@20.1.1":
+"@angular-eslint/schematics@^20.1.1":
   version "20.1.1"
   resolved "https://registry.npmjs.org/@angular-eslint/schematics/-/schematics-20.1.1.tgz"
   integrity sha512-4sXU0Gr/RhdW3xSBFRzjhTO9mk6ugXUhUIPc1FRta1pmNnbmkvx22ewnKZE8IeRl8PMyk6xJuxZHq19CW1oWOA==
