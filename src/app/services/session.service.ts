@@ -27,4 +27,12 @@ export class SessionService {
   toggleFavorite(sessionId: string): Observable<any> {
     return this.http.post(`${BASE_URL}${API_ENDPOINTS.TOGGLE_FAVORITE(sessionId)}`, {}, { headers: new HttpHeaders(API_HEADERS) });
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  deleteSession(sessionId: string): Observable<any> {
+  return this.http.delete(
+    `${BASE_URL}${API_ENDPOINTS.DELETE_SESSION(sessionId)}`,
+    { headers: new HttpHeaders(API_HEADERS) }
+  );
+}
 }

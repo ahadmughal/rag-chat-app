@@ -75,4 +75,17 @@ export class NavContentComponent implements OnInit {
       }
     });
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  deleteSession(session: any) {
+  if (!session.sessionId) return;
+  this.sessionService.deleteSession(session.sessionId).subscribe({
+    next: () => {
+      this.refreshSessions();
+    },
+    error: (err) => {
+      console.error('Failed to delete session', err);
+    }
+  });
+}
 }

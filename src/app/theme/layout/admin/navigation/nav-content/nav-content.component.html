@@ -33,6 +33,13 @@
                 [ngClass]="session.favorite ? 'bi-star-fill text-warning' : 'bi-star'"
               ></i>
             </button>
+            <button
+              class="btn btn-link p-0 ms-2"
+              (click)="deleteSession(session)"
+              title="Delete session"
+            >
+              <i class="bi bi-trash text-danger"></i>
+            </button>
           </li>
         }
       }
