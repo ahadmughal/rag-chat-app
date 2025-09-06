@@ -30,9 +30,10 @@ export class SessionService {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   deleteSession(sessionId: string): Observable<any> {
-  return this.http.delete(
-    `${BASE_URL}${API_ENDPOINTS.DELETE_SESSION(sessionId)}`,
-    { headers: new HttpHeaders(API_HEADERS) }
-  );
-}
+    return this.http.delete(`${BASE_URL}${API_ENDPOINTS.DELETE_SESSION(sessionId)}`, { headers: new HttpHeaders(API_HEADERS) });
+  }
+
+  createSession(data: { sessionName: string }) {
+    return this.http.post(`${BASE_URL}${API_ENDPOINTS.CREATE_SESSION}`, data, { headers: new HttpHeaders(API_HEADERS) });
+  }
 }

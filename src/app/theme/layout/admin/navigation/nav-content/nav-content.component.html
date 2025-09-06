@@ -1,47 +1,58 @@
 <ng-scrollbar style="height: calc(100vh - 70px)" visibility="hover">
   <div class="navbar-content">
+    <div class="d-flex flex-column mb-2 padding10">
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-link p-0" (click)="toggleCreateSession()"
+          [title]="creatingSession ? 'Cancel' : 'Add session'">
+          <i class="bi toggleCreationBtn" [ngClass]="creatingSession ? 'bi-dash-circle' : 'bi-plus-circle'"></i>
+        </button>
+      </div>
+
+      <form *ngIf="creatingSession" class="mt-2" (ngSubmit)="createSession()">
+        <input type="text" [(ngModel)]="newSessionName" name="sessionName" placeholder="Enter Session Name (required)"
+          class="form-control" required autofocus />
+      </form>
+    </div>
     <ul class="listContainerPadding">
       @if (sessions.length === 0) {
-        <li class="sessionsListStyle">No sessions found.</li>
+      <li class="sessionsListStyle">No sessions found.</li>
       } @else {
-        @for (session of sortedSessions(); track session) {
-          <li class="d-flex align-items-center sessionsListStyle">
-            <input
-              *ngIf="editingSessionId === session.sessionId"
-              type="text"
-              [value]="session.sessionName"
-              (blur)="saveSessionName(session)"
-              (keydown.enter)="saveSessionName(session)"
-              (input)="session.sessionName = ($event.target['value'])"
-              class="form-control me-2"
-              style="width: 100%"
-              autofocus
-            />
-            <span *ngIf="editingSessionId !== session.sessionId">
-              {{ session.sessionName }}
-            </span>
-            <button class="btn btn-link p-0 ms-2" (click)="editSession(session)">
-              <i class="bi bi-pencil"></i>
-            </button>
-            <button
-              class="btn btn-link p-0 ms-2"
-              (click)="toggleFavorite(session)"
-              [attr.title]="session.favorite ? 'Unmark as favorite' : 'Mark as favorite'"
-            >
-              <i
-                class="bi"
-                [ngClass]="session.favorite ? 'bi-star-fill text-warning' : 'bi-star'"
-              ></i>
-            </button>
-            <button
-              class="btn btn-link p-0 ms-2"
-              (click)="deleteSession(session)"
-              title="Delete session"
-            >
-              <i class="bi bi-trash text-danger"></i>
-            </button>
-          </li>
-        }
+      @for (session of sortedSessions(); track session) {
+      <li class="sessionsListStyle mb-2">
+        <div class="d-flex flex-column">
+          <!-- Session name / input field -->
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="flex-grow-1">
+              <input *ngIf="editingSessionId === session.sessionId" type="text" [value]="session.sessionName"
+                (blur)="saveSessionName(session)" (keydown.enter)="saveSessionName(session)"
+                (input)="session.sessionName = ($event.target['value'])" class="form-control" autofocus />
+              <span *ngIf="editingSessionId !== session.sessionId">
+                {{ session.sessionName }}
+              </span>
+            </div>
+
+            <!-- Dropdown for actions -->
+            <div ngbDropdown class="ms-2">
+              <button class="btn btn-link p-0" id="dropdownMenuButton" ngbDropdownToggle>
+                <i class="bi bi-three-dots-vertical shortMenuIcons"></i>
+              </button>
+              <div ngbDropdownMenu aria-labelledby="dropdownMenuButton" class="dropdown-menu-end">
+                <button class="dropdown-item" (click)="editSession(session)">
+                  <i class="bi bi-pencil me-1"></i> Edit
+                </button>
+                <button class="dropdown-item" (click)="toggleFavorite(session)">
+                  <i class="bi" [ngClass]="session.favorite ? 'bi-star-fill text-warning' : 'bi-star'"></i>
+                  {{ session.favorite ? 'Unfavorite' : 'Favorite' }}
+                </button>
+                <button class="dropdown-item text-danger" (click)="deleteSession(session)">
+                  <i class="bi bi-trash me-1"></i> Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+      }
       }
     </ul>
   </div>

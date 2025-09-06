@@ -10034,3 +10034,16 @@
   padding: 10px;
   padding-left: 10px !important;
 }
+.padding10{
+  padding:10px;
+}
+.toggleCreationBtn{
+  font-size:20px !important;
+      background-color: #dfd8ef;
+    color: #623fb0;
+    padding: 6px 6px 4px 6px;
+    border-radius: 10px;
+}
+.shortMenuIcons{
+  color: #623fb0;
+}
